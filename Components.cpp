@@ -6,15 +6,21 @@
 // Node Class ------------------------------------------------
 
 // allows nodes to be equated. NOTE: when node A is set = to node B, node A retains its name
-Node& Node::operator=(const Node& n) {
-    this->order = n.order;
-    this->working_value = n.working_value;
-    this->final_value = n.final_value;
-    this->connections = n.connections;
+Node& Node::operator=(const Node& node) {
+    this->order = node.order;
+    this->working_value = node.working_value;
+    this->final_value = node.final_value;
+    this->connections = node.connections;
 
     return *this;
 }
 
+bool Node::operator==(const Node& node) {
+    // returns true only if they share the same address in memory
+    return (&node == this);
+}
+
+// desctructor
 Node::~Node(){}
 
 // connect to another node in the graph
@@ -24,7 +30,7 @@ int Node::connect(Node& node) {
     auto iterator = std::find(
         this->connections.begin(), 
         this->connections.end(), 
-        node
+        node.get_name()
     );
     
     // if the node is in the `connections` vector, no need to connect
@@ -34,8 +40,8 @@ int Node::connect(Node& node) {
     }
 
     // add the nodes to each others' `connections` vectors
-    this->connections.push_back(node);
-    node.connections.push_back(*this);
+    this->connections.push_back(node.get_name());
+    node.connections.push_back(this->get_name());
 
     // successful connection
     return 0;
@@ -48,7 +54,7 @@ int Node::disconnect(Node& node) {
     auto iterator = std::find(
         this->connections.begin(), 
         this->connections.end(), 
-        node
+        node.get_name()
     );
     
     // if the node is in the vector, removes the node from it, and removes `this` from `node`'s
@@ -59,7 +65,7 @@ int Node::disconnect(Node& node) {
             std::find(
                 node.connections.begin(),
                 node.connections.end(),
-                this
+                this->get_name()
             )
         );
         // successful disconnection
@@ -75,5 +81,11 @@ int Node::disconnect(Node& node) {
 // initialise network
 Network::Network() {
     this->members = std::vector<Node>();
-    this->num_members = 0;
+}
+
+Network::~Network(){}
+
+// returns size of network (how many nodes it contains)
+int Network::size() {
+    return this->members.size();
 }

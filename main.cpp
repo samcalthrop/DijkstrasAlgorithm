@@ -21,10 +21,18 @@ int main() {
 
     std::cout << node1.get_name() << ", " << node1.get_working_value() << std::endl;
 
-    // TODO: make struct/ template to group Nodes in a list/ vector/ SOMETHING
-    std::vector<Node> nodes;
+    Network nodes;
 
-    std::cout << nodes.size() << std::endl;
+    if (node1 == node1){
+        std::cout << "true" << std::endl;
+    } else {
+        std::cout << "false" << std::endl;
+    }
+
+    node1.connect(node2);
+
+    std::cout << node1.get_connections()[0] << std::endl;
+    std::cout << node2.get_connections()[0] << std::endl;
     
     return 0;
 }

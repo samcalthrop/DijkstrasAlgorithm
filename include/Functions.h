@@ -4,6 +4,6 @@
 #include <vector>
 #include <string>
 
-int find(std::vector<std::string> vec, std::string val);
+// int find(std::vector<std::string> vec, std::string val);
 
 #endif
