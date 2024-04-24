@@ -9,12 +9,13 @@
 #include "defs.h"
 #include "Functions.h"
 
+
 class Node {
 private:
     std::string name;
-    int order;
     int working_value;
     int final_value;
+    int order;
 
 public:
     std::vector<std::string> connections;
@@ -33,7 +34,6 @@ public:
         this->connections = connections;
     }
 
-    // Node(const Node& n);
     Node& operator=(const Node& n);
     virtual ~Node();
 
@@ -52,5 +52,20 @@ public:
     int connect(Node& node);
     int disconnect(Node& node);
 };
+
+
+class Network {
+private:
+    int num_members;
+    std::vector<std::string> members;
+
+public:
+    Network() {
+        this->members = std::vector<std::string>();
+        this->num_members = 0;
+    }
+    ~Network();
+};
+
 
 #endif

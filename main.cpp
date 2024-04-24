@@ -20,6 +20,11 @@ int main() {
     node1 = node2;
 
     std::cout << node1.get_name() << ", " << node1.get_working_value() << std::endl;
+
+    // TODO: make struct/ template to group Nodes in a list/ vector/ SOMETHING
+    std::vector<Node> nodes;
+
+    std::cout << nodes.size() << std::endl;
     
     return 0;
 }

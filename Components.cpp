@@ -2,7 +2,8 @@
 
 #include "include/Components.h"
 
-// Node::Node(const Node& n) { }
+
+// Node Class ------------------------------------------------
 
 // allows nodes to be equated. NOTE: when node A is set = to node B, node A retains its name
 Node& Node::operator=(const Node& n) {
@@ -66,4 +67,13 @@ int Node::disconnect(Node& node) {
     }
     // disconnect failed; nodes weren't connected before hand
     return -1;
+}
+
+
+// Network Class ---------------------------------------------
+
+// initialise network
+Network::Network() {
+    this->members = std::vector<std::string>();
+    this->num_members = 0;
 }
