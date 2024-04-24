@@ -6,6 +6,9 @@
 #include <vector>
 #include <limits>
 
+#include "defs.h"
+#include "Functions.h"
+
 class Node {
 private:
     std::string name;
@@ -15,9 +18,23 @@ private:
 
 public:
     std::vector<std::string> connections;
-    Node();
+    
+    // initialise node
+    Node(std::string name = "",
+        int order = 1,
+        int working_value = INF,
+        int final_value = INF,
+        std::vector<std::string> connections = std::vector<std::string>()) 
+    {
+        this->name = name;
+        this->order = order;
+        this->working_value = working_value;
+        this->final_value = final_value;
+        this->connections = connections;
+    }
+
     // Node(const Node& n);
-    // Node& operator=(const Node& n);
+    Node& operator=(const Node& n);
     virtual ~Node();
 
     void set_name(std::string n = "") { this->name = n; };
