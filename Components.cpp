@@ -24,7 +24,7 @@ int Node::connect(Node& node) {
     auto iterator = std::find(
         this->connections.begin(), 
         this->connections.end(), 
-        node.get_name()
+        node
     );
     
     // if the node is in the `connections` vector, no need to connect
@@ -34,8 +34,8 @@ int Node::connect(Node& node) {
     }
 
     // add the nodes to each others' `connections` vectors
-    this->connections.push_back(node.get_name());
-    node.connections.push_back(this->get_name());
+    this->connections.push_back(node);
+    node.connections.push_back(*this);
 
     // successful connection
     return 0;
@@ -48,7 +48,7 @@ int Node::disconnect(Node& node) {
     auto iterator = std::find(
         this->connections.begin(), 
         this->connections.end(), 
-        node.get_name()
+        node
     );
     
     // if the node is in the vector, removes the node from it, and removes `this` from `node`'s
@@ -59,7 +59,7 @@ int Node::disconnect(Node& node) {
             std::find(
                 node.connections.begin(),
                 node.connections.end(),
-                this->get_name()
+                this
             )
         );
         // successful disconnection
@@ -74,6 +74,6 @@ int Node::disconnect(Node& node) {
 
 // initialise network
 Network::Network() {
-    this->members = std::vector<std::string>();
+    this->members = std::vector<Node>();
     this->num_members = 0;
 }
