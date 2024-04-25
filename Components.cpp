@@ -24,14 +24,10 @@ bool Node::operator==(const Node& node) {
 Node::~Node(){}
 
 // connect to another node in the graph
-int Node::connect(Node& node) {
+int Node::connect(Node& node, int arc_length) {
 
-    // searches for `node`'s name in `this`'s `connections` vector
-    auto iterator = std::find(
-        this->connections.begin(), 
-        this->connections.end(), 
-        node.get_name()
-    );
+    // searches for `node`'s name in `this`'s `connections` map
+    std::map<std::string, int>::iterator iterator = this->connections.find(node.name);
     
     // if the node is in the `connections` vector, no need to connect
     if (iterator != this->connections.end()) { 
@@ -40,39 +36,64 @@ int Node::connect(Node& node) {
     }
 
     // add the nodes to each others' `connections` vectors
-    this->connections.push_back(node.get_name());
-    node.connections.push_back(this->get_name());
+    this->connections.insert(std::pair<std::string, int>(node.get_name(), arc_length));
+    node.connections.insert(std::pair<std::string, int>(this->get_name(), arc_length));
 
     // successful connection
     return 0;
 }
 
+// // disconnect from a node previously connected to
+// int Node::disconnect(Node& node, int arc_length) {
+    
+//     // searches for `node`'s name in `this`'s `connections` vector
+//     auto iterator = std::find(
+//         this->connections.begin(),
+//         this->connections.end(), 
+//         std::pair<std::string, int>(node.get_name(), arc_length)        
+//     );
+    
+//     // if the node is in the vector, removes the node from it, and removes `this` from `node`'s
+//     // `connections` vector aswell (handshake lemma means the connection goes both ways)
+//     if (iterator != this->connections.end()) { 
+//         this->connections.erase(iterator); 
+//         node.connections.erase(
+//             std::find(
+//                 node.connections.begin(),
+//                 node.connections.end(),
+//                 std::pair<std::string, int>(this->get_name(), arc_length)        
+//             )
+//         );
+//         // successful disconnection
+//         return 0; 
+//     }
+//     // disconnect failed; nodes weren't connected before hand
+//     return -1;
+// }
+
 // disconnect from a node previously connected to
 int Node::disconnect(Node& node) {
     
-    // searches for `node`'s name in `this`'s `connections` vector
-    auto iterator = std::find(
-        this->connections.begin(), 
-        this->connections.end(), 
-        node.get_name()
-    );
+    // searches for `node`'s name in `this`'s `connections` map
+    std::map<std::string, int>::iterator iterator = this->connections.find(node.name);
     
     // if the node is in the vector, removes the node from it, and removes `this` from `node`'s
     // `connections` vector aswell (handshake lemma means the connection goes both ways)
     if (iterator != this->connections.end()) { 
         this->connections.erase(iterator); 
-        node.connections.erase(
-            std::find(
-                node.connections.begin(),
-                node.connections.end(),
-                this->get_name()
-            )
-        );
+        node.connections.erase(this->name);
         // successful disconnection
         return 0; 
     }
     // disconnect failed; nodes weren't connected before hand
     return -1;
+}
+
+void Node::print_connections() {
+    for (auto const& [node, arc] : this->connections){
+        std::cout << "Node: " << node << " / " << "Arc Length: " << arc << std::endl;
+    }
+    if (this->connections.size() == 0) std::cout << "[ " << this->name <<  " has no connections ]" << std::endl;
 }
 
 
@@ -86,6 +107,33 @@ Network::Network() {
 Network::~Network(){}
 
 // returns size of network (how many nodes it contains)
-int Network::size() {
+inline int Network::size() {
     return this->members.size();
+}
+
+int Network::add(Node& node) {
+    for (int i=0; i<this->members.size(); i++) {
+        if (this->members[i].get_name() == node.get_name()) {
+            std::cout << ">" << node.get_name() <<" already in network" << std::endl;
+            return -1;
+        }
+    }
+    this->members.push_back(node);
+    return 0;
+}
+
+int Network::add(std::vector<Node>& nodes) {
+    for (int member=0; member<nodes.size(); member++) {
+        add(nodes[member]); ///// HERE!!!!!
+    }
+}
+
+int Network::remove(Node& node) {
+
+}
+
+void Network::print_members() {
+    for (int i=0; i<this->members.size(); i++) {
+        std::cout << this->members[i].get_name() << std::endl;
+    }
 }

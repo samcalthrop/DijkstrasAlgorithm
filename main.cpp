@@ -4,35 +4,39 @@
 #include "Components.h"
 
 int main() {
-    Node node1("abcdefghijklmnopqrstuvwxyz", 1, 2);
-    Node node2;
+    Node A, B, C, D;
 
-    std::cout << node1.get_name() << ", " << node1.get_working_value() << std::endl;
+    A.set_name("<A>");
+    B.set_name("<B>");
+    C.set_name("<C>");
+    D.set_name("<D>");
 
-    node1.set_name("node 1");
-    
-    node2.set_name("node 2");
-    node2.set_working_value(1);
+    B.set_working_value(1);
 
-    std::cout << node1.get_name() << ", " << node1.get_working_value() << std::endl;
-    std::cout << node1.get_name() << ", " << node2.get_working_value() << std::endl;
+    Network Nodes;
 
-    node1 = node2;
+    A.connect(B, 12);
+    std::map<std::string, int> node1_connections = A.get_connections();
 
-    std::cout << node1.get_name() << ", " << node1.get_working_value() << std::endl;
+    std::vector<Node> abc;
+    abc.push_back(A);
+    abc.push_back(B);
+    abc.push_back(C);
 
-    Network nodes;
+    Nodes.add(abc);
+    Nodes.add(A);
+    Nodes.add(B);
+    Nodes.print_members();
 
-    if (node1 == node1){
-        std::cout << "true" << std::endl;
-    } else {
-        std::cout << "false" << std::endl;
-    }
+    A.print_connections();
+    B.print_connections();
+    C.print_connections();
 
-    node1.connect(node2);
+    A.disconnect(B);
 
-    std::cout << node1.get_connections()[0] << std::endl;
-    std::cout << node2.get_connections()[0] << std::endl;
-    
+    A.print_connections();
+    B.print_connections();
+    C.print_connections();
+
     return 0;
 }
