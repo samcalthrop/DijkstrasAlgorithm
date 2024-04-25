@@ -66,7 +66,9 @@ void Node::print_connections() {
     for (auto const& [node, arc] : this->connections) {
         std::cout << "Node: " << node << " / " << "Arc-Length: " << arc << std::endl;
     }
-    if (this->connections.size() == 0) std::cout << "[ " << this->name <<  " has no connections ]" << std::endl;
+    if (this->connections.size() == 0) {
+        std::cout << "[ " << this->name <<  " has no connections ]" << std::endl;
+    }
 }
 
 
@@ -101,9 +103,28 @@ int Network::add(std::vector<Node>& nodes) {
     }
 }
 
+// TODOS: make remove work;
+// -iterates through each node `node` is connected to in `connections`
+// -calls `.disconnect` on each to remove
+// -removes `node` from `members`
+
 int Network::remove(Node& node) {
     // if node is in `members`, aka is in the network...
-    // find the node in `members` and disconnect from `node`
+    for (int i=0; i<this->members.size(); ++i) {
+        if (this->members[i].name == node.name) {
+            // find the node in `members` and disconnect from `node`
+            int count = 0;
+            for (auto n : this->members) {
+                // if the node in members has a connection to `node`...
+                if (node.get_connections().contains(n.name)) {
+                    std::cout << ">> " << this->members[count].name << " disconnected <<" << std::endl;
+                    this->members[count].disconnect(node);
+                }
+                count++;
+            }
+            return 0;
+        }
+    }
     return -1;
 }
 
