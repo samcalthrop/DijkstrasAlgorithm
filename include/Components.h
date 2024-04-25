@@ -9,17 +9,23 @@
 #include <algorithm>
 
 #include "defs.h"
-#include "Functions.h"
+
+
+
+
+// CHANGE MADE: changed `connections` to std::map<Node, int>. this is the cause of your pain.
+
+
 
 
 class Node {
 private:
-    std::string name;
     int working_value;
     int final_value;
     int order;
 
 public:
+    std::string name;
     std::map<std::string, int> connections; // <node, arc>
     
     // initialise node
@@ -35,10 +41,11 @@ public:
         this->final_value = final_value;
         this->connections = connections;
     }
+    
+    virtual ~Node();
 
     Node& operator=(const Node& node);
     bool operator==(const Node& node);
-    virtual ~Node();
 
     void set_name(std::string n = "") { this->name = n; };
     void set_order(int o) { this->order = o; };
@@ -71,6 +78,8 @@ public:
     int add(std::vector<Node>& nodes);
     int remove(Node& node);
     void print_members();
+    inline int locate(Node& node);
+    inline int locate(std::string name);
 };
 
 

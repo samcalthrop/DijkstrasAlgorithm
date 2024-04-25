@@ -4,6 +4,9 @@
 #include <vector>
 #include <string>
 
-// int find(std::vector<std::string> vec, std::string val);
+#include "Components.h"
+
+int find(std::vector<Node>& vec, Node node);
+int find(std::vector<Node>& vec, std::string);
 
 #endif
