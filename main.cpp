@@ -31,8 +31,8 @@ int main() {
     C.print_connections();
     std::cout << std::endl;
 
-    // A.disconnect(B);
-    network.remove(A);  
+    // B.disconnect(A);
+    network.remove(B);
     std::cout << std::endl;
 
     A.print_connections();
@@ -42,6 +42,7 @@ int main() {
     C.print_connections();
     std::cout << std::endl;
 
+    network.print_members();
 
     return 0;
 }

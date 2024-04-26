@@ -53,7 +53,9 @@ int Node::disconnect(Node& node) {
     // `connections` vector aswell (handshake lemma means the connection goes both ways)
     if (iterator != this->connections.end()) { 
         this->connections.erase(iterator); 
+        std::cout << "successfully disconnected " << this->name << " from " << node.name << std::endl;
         node.connections.erase(this->name);
+        std::cout << "successfully disconnected " << node.name << " from " << this->name << std::endl;
         // successful disconnection
         return 0; 
     }
@@ -109,23 +111,14 @@ int Network::add(std::vector<Node>& nodes) {
 // -removes `node` from `members`
 
 int Network::remove(Node& node) {
-    // if node is in `members`, aka is in the network...
-    for (int i=0; i<this->members.size(); ++i) {
-        if (this->members[i].name == node.name) {
-            // find the node in `members` and disconnect from `node`
-            int count = 0;
-            for (auto n : this->members) {
-                // if the node in members has a connection to `node`...
-                if (node.get_connections().contains(n.name)) {
-                    std::cout << ">> " << this->members[count].name << " disconnected <<" << std::endl;
-                    this->members[count].disconnect(node);
-                }
-                count++;
-            }
-            return 0;
-        }
+    // finds if `node` is in the network
+    for (Node n : this->members) {
+        // if the node in members has a connection to `node`...
+        std::cout << n.name << std::endl;
+        std::cout << node.disconnect(n) << std::endl;
+        // check n's connections:
     }
-    return -1;
+    return 0;
 }
 
 void Network::print_members() {

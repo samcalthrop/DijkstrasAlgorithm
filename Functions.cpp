@@ -11,6 +11,8 @@ int find(std::vector<Node>& vec, Node node) {
     return -1;
 }
 
+// look at the types passed in
+
 int find(std::vector<Node>& vec, std::string name) {
     for (int index=0; index<vec.size(); index++) {
         if (vec[index].get_name() == name) {
