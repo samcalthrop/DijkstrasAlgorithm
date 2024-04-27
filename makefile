@@ -7,10 +7,10 @@ LDIR =../lib
 
 LIBS=-lm
 
-_DEPS=Components.h defs.h Functions.h
+_DEPS=Components.h defs.h Functions.h Arc.h Vector2.h
 DEPS= $(patsubst %,$(IDIR)/%,$(_DEPS))
 
-_OBJ=main.o Components.o Functions.o
+_OBJ=main.o Components.o Functions.o Arc.o Vector2.o
 OBJ=$(patsubst %,$(ODIR)/%,$(_OBJ))
 
 $(ODIR)/%.o: %.cpp $(DEPS)

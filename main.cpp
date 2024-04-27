@@ -13,7 +13,7 @@ int main() {
 
     B.set_working_value(1);
 
-    std::map<std::string, int> node1_connections = A.get_connections();
+    // std::map<std::string, int> node1_connections = A.get_connections();
 
     std::vector<Node> abc;
     abc.push_back(A), abc.push_back(B), abc.push_back(C);
@@ -31,8 +31,8 @@ int main() {
     C.print_connections();
     std::cout << std::endl;
 
-    // B.disconnect(A);
-    network.remove(B);
+    // A.disconnect(B);
+    network.remove(A);
     std::cout << std::endl;
 
     A.print_connections();
@@ -43,6 +43,10 @@ int main() {
     std::cout << std::endl;
 
     network.print_members();
+    for (int i=0; i<network.size(); i++) {
+        std::cout << network.members[i].get_name() << std::endl;
+    }
+    std::cout << network.size() << std::endl;
 
     return 0;
 }

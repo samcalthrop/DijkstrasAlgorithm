@@ -1,10 +1,11 @@
 #include <iostream>
 
 #include "include/Components.h"
+#include "include/Arc.h"
 #include "include/Functions.h"
 
-// Node Class ------------------------------------------------
 
+// Node Class -----------------------------------------------------------------
 // allows nodes to be equated. NOTE: when node A is set = to node B, node A retains its name
 Node& Node::operator=(const Node& node) {
     this->order = node.order;
@@ -15,29 +16,22 @@ Node& Node::operator=(const Node& node) {
     return *this;
 }
 
-bool Node::operator==(const Node& node) {
-    // returns true only if they share the same address in memory
-    return (&node == this);
-}
-
 // desctructor
 Node::~Node(){}
 
 // connect to another node in the graph
 int Node::connect(Node& node, int arc_length) {
 
-    // searches for `node`'s name in `this`'s `connections` map
-    std::map<std::string, int>::iterator iterator = this->connections.find(node.name);
-    
     // if the node is in the `connections` vector, no need to connect
-    if (iterator != this->connections.end()) { 
-        // connection failed; nodes are already connected
-        return -1;
+    for (int i=0; i<this->connections.size(); ++i) {
+        if (this->connections[i]->node == &node) { 
+            // connection failed; nodes are already connected
+            return -1;
+        }
     }
-
     // add the nodes to each others' `connections` vectors
-    this->connections.insert(std::pair<std::string, int>(node.get_name(), arc_length));
-    node.connections.insert(std::pair<std::string, int>(this->get_name(), arc_length));
+    this->connections.push_back(new Arc(&node, arc_length));
+    node.connections.push_back(new Arc(this, arc_length));
 
     // successful connection
     return 0;
@@ -46,27 +40,45 @@ int Node::connect(Node& node, int arc_length) {
 // disconnect from a node previously connected to
 int Node::disconnect(Node& node) {
     
-    // searches for `node`'s name in `this`'s `connections` map
-    std::map<std::string, int>::iterator iterator = this->connections.find(node.name);
-    
-    // if the node is in the vector, removes the node from it, and removes `this` from `node`'s
-    // `connections` vector aswell (handshake lemma means the connection goes both ways)
-    if (iterator != this->connections.end()) { 
-        this->connections.erase(iterator); 
-        std::cout << "successfully disconnected " << this->name << " from " << node.name << std::endl;
-        node.connections.erase(this->name);
-        std::cout << "successfully disconnected " << node.name << " from " << this->name << std::endl;
-        // successful disconnection
-        return 0; 
+    // using `std::remove_if()` with a lambda function to remove Arc* from `connections`
+    auto arcPtr = std::find_if(this->connections.begin(), this->connections.end(), [&](Arc* arc) {
+        return arc->node == &node;
+    });
+
+    // find the Arc* object corresponding to current node in `connections` of specified node
+    if (arcPtr != this->connections.end()) {
+        
+        std::cout << "this worked" << std::endl;
+
+        // disconnect nodes *from each other*
+        this->connections.erase(arcPtr);
+        auto nodePtr = std::find_if(node.connections.begin(), node.connections.end(), [&](Arc* arc) {
+            return arc->node == this;
+        });
+        if (nodePtr != node.connections.end()) {
+            node.connections.erase(nodePtr);
+            return 0;
+        }
     }
-    // disconnect failed; nodes weren't connected before hand
+
+    // not connected
     return -1;
 }
 
+// void Node::print_connections() {
+//     std::cout << " -- Connections To " << this->name  << ":"<< std::endl; 
+//     for (auto const& [node, arc] : this->connections) {
+//         std::cout << "Node: " << node.name << " / " << "Arc-Length: " << arc << std::endl;
+//     }
+//     if (this->connections.size() == 0) {
+//         std::cout << "[ " << this->name <<  " has no connections ]" << std::endl;
+//     }
+// }
+
 void Node::print_connections() {
     std::cout << " -- Connections To " << this->name  << ":"<< std::endl; 
-    for (auto const& [node, arc] : this->connections) {
-        std::cout << "Node: " << node << " / " << "Arc-Length: " << arc << std::endl;
+    for (auto const& a : this->connections) {
+        std::cout << "Node: " << a->node->name << " / " << "Arc-Length: " << a->arc << std::endl;
     }
     if (this->connections.size() == 0) {
         std::cout << "[ " << this->name <<  " has no connections ]" << std::endl;
@@ -74,8 +86,7 @@ void Node::print_connections() {
 }
 
 
-// Network Class ---------------------------------------------
-
+// Network Class --------------------------------------------------------------
 // initialise network
 Network::Network() {
     this->members = std::vector<Node>();
@@ -84,7 +95,7 @@ Network::Network() {
 Network::~Network(){}
 
 // returns size of network (how many nodes it contains)
-inline int Network::size() {
+int Network::size() {
     return this->members.size();
 }
 
@@ -103,22 +114,46 @@ int Network::add(std::vector<Node>& nodes) {
     for (int member=0; member<nodes.size(); member++) {
         add(nodes[member]);
     }
+    return 0;
 }
 
 // TODOS: make remove work;
-// -iterates through each node `node` is connected to in `connections`
-// -calls `.disconnect` on each to remove
-// -removes `node` from `members`
+// X -iterates through each node `node` is connected to in `connections` -> DONE
+// X -calls `.disconnect` on each to remove -> DONE
+// -removes `node` from `members` -> not working
 
 int Network::remove(Node& node) {
-    // finds if `node` is in the network
-    for (Node n : this->members) {
-        // if the node in members has a connection to `node`...
-        std::cout << n.name << std::endl;
-        std::cout << node.disconnect(n) << std::endl;
-        // check n's connections:
+
+    // iterate through the vector using subscript notation
+
+    bool found = vec_remove(this->members, node);
+
+    // bool found = false;
+    // for (size_t i = 0; i < this->members.size(); ++i) {
+        // if (this->members[i] == node) {
+            // std::cout << "node found: " << node.name << std::endl;
+            // std::cout << "index found: " << i << std::endl;
+            // this->members.erase(this->members.begin() + i);
+            // found = true;
+            // break;
+        // }
+    // }
+    if (!found) {
+        return -1;
     }
-    return 0;
+
+    // iterate through the remaining nodes and remove the specified node from their connections
+    for (Arc* n : node.connections) {
+        node.disconnect(*n->node);
+    }
+
+    // Print the updated members list
+    std::cout << "Updated members list after removal:" << std::endl;
+    for (const Node& n : this->members) {
+        std::cout << n.name << std::endl;
+    }
+
+    return 0; // Node successfully removed
 }
 
 void Network::print_members() {
@@ -127,7 +162,7 @@ void Network::print_members() {
     }
 }
 
-inline int Network::locate(Node& node) {
+int Network::locate(Node& node) {
     return find(this->members, node);
 }
 
