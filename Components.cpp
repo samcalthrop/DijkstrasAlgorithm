@@ -162,11 +162,14 @@ int Network::remove(Node& node) {
 
     // iterate through the remaining nodes and remove the specified node from their connections
     while(node.connections.size() > 0) {
-        for (Arc* n : node.connections) {
-            std::cout << "node in " << node.name << ".connections: " << (*n->node).name << std::endl;
-            node.disconnect(*n->node);
-            // when disconnected, the iterator skips forward 2 instead of one, meaning every second node is not disconnected
-            // incredibly inefficient to use the while loop, but iterators are miserable so i don't care
+        // for (Arc* a : node.connections) {
+        //     std::cout << "node in " << node.name << ".connections: " << (*a->node).name << std::endl;
+        //     node.disconnect(*a->node);
+        //     // when disconnected, the iterator skips forward 2 instead of one, meaning every second node is not disconnected
+        //     // incredibly inefficient to use the while loop, but iterators are miserable so i don't care
+        // }
+        for (int i=node.connections.size()-1; i>=0; --i) {
+            node.connections[i]->node->disconnect(node);
         }
     }
     return 0; // Node successfully removed
