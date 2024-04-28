@@ -48,7 +48,7 @@ int Node::disconnect(Node& node) {
     // find the Arc* object corresponding to current node in `connections` of specified node
     if (arcPtr != this->connections.end()) {
         
-        std::cout << "this worked" << std::endl;
+        std::cout << "arcPtr found in this->connections" << std::endl;
 
         // disconnect nodes *from each other*
         this->connections.erase(arcPtr);
@@ -122,28 +122,70 @@ int Network::add(std::vector<Node>& nodes) {
 // X -calls `.disconnect` on each to remove -> DONE
 // -removes `node` from `members` -> not working
 
+// IDEA: Replace the members vector with a new identical vector - the node to be removed;
+// - instantiate new vector
+// - iterate through `members`, pushing all into new vector *unless it is the target node*
+// - let `members` = the new vector
+
+// int Network::remove(Node& node) {
+//     if (!vec_remove(this->members, node)) { return -1; }
+//     // this->members.erase(std::remove(this->members.begin(), this->members.end(), node), this->members.end());
+//     // iterate through the remaining nodes and remove the specified node from their connections
+//     for (Arc* n : node.connections) {
+//         std::cout << "node in " << node.name << ".connections: " << (*n->node).name << std::endl;
+//         node.disconnect(*n->node);
+//     }
+//     // Print the updated members list
+//     std::cout << "Updated members list after removal:" << std::endl;
+//     for (const Node& n : this->members) {
+//         std::cout << n.name << std::endl;
+//     }
+//     return 0; // Node successfully removed
+// }
+
 int Network::remove(Node& node) {
 
-    // iterate through the vector using subscript notation
+    bool is_member = false;
+    std::vector<Node> replace_members;
 
-    bool found = vec_remove(this->members, node);
-
-    // bool found = false;
-    // for (size_t i = 0; i < this->members.size(); ++i) {
-        // if (this->members[i] == node) {
-            // std::cout << "node found: " << node.name << std::endl;
-            // std::cout << "index found: " << i << std::endl;
-            // this->members.erase(this->members.begin() + i);
-            // found = true;
-            // break;
-        // }
-    // }
-    if (!found) {
-        return -1;
+    for (Node n : this->members) {
+        if (n != node) {
+            replace_members.push_back(n);
+            std::cout << "nodes != target: " << n.name << std::endl;
+        }
+        else {
+            is_member = true;
+        }
     }
+
+    for (Node n : replace_members) {
+        std::cout << "node in replace_mambers: " << n.name << std::endl;
+    }
+
+    std::cout << "members size: " << this->members.size() << std::endl;
+    int size = this->members.size(); // this->members.size() is getting updated after each iteration of the loop, stopping it prematurely???!!!!
+    for (int member=0; member<size; ++member) {
+        std::cout << "members old size: " << this->members.size() << std::endl;
+        this->members.pop_back();
+        std::cout << "members new size: " << this->members.size() << std::endl;
+    }
+
+    for (Node n : replace_members) {
+        this->members.push_back(n);
+        std::cout << "what the hell!!!!!!!!: " << n.name << std::endl;
+    }
+    
+    for (Node n : this->members) {
+        std::cout << "node in new members: " << n.name << std::endl;
+    }
+
+    if (!is_member) { return -1; }
+
+    // this->members.erase(std::remove(this->members.begin(), this->members.end(), node), this->members.end());
 
     // iterate through the remaining nodes and remove the specified node from their connections
     for (Arc* n : node.connections) {
+        std::cout << "node in " << node.name << ".connections: " << (*n->node).name << std::endl;
         node.disconnect(*n->node);
     }
 
@@ -157,6 +199,7 @@ int Network::remove(Node& node) {
 }
 
 void Network::print_members() {
+    std::cout << "print_members; size: " << this->members.size() << std::endl;
     for (int i=0; i<this->members.size(); i++) {
         std::cout << this->members[i].get_name() << std::endl;
     }
